@@ -1,5 +1,5 @@
 const axios = require('axios')
-const baseUrl = 'http://localhost:3001/movies'
+const baseUrl = 'http://localhost:3002/tv-shows'
 const Redis = require('ioredis')
 const redis = new Redis()
 
@@ -8,42 +8,42 @@ class Controller {
     try {
       const response = await axios.post(baseUrl, req.body)
       res.status(201).json(response.data)
-      redis.del('movies')
-      redis.del('movie')
+      redis.del('tvShows')
+      redis.del('tvShow')
     } catch (err) {
       next(err)
     }
   }
 
-  static async getMovieList(req, res, next) {
+  static async getTvShowList(req, res, next) {
     try {
-      const movies = await redis.get('movies')
-      if (movies) {
-        res.json(JSON.parse(movies))
+      const tvShows = await redis.get('tvShows')
+      if (tvShows) {
+        res.json(JSON.parse(tvShows))
       } else {
         const { data } = await axios.get(baseUrl)
-        const movieList = data
-        res.json(movieList)
-        redis.set('movies', JSON.stringify(movieList))
+        const tvShowList = data
+        res.json(tvShowList)
+        redis.set('tvShows', JSON.stringify(tvShowList))
       }
     } catch (err) {
       next(err)
     }
   }
 
-  static async getMovie(req, res, next) {
+  static async getTvShow(req, res, next) {
     try {
-      let cachedMovie = await redis.get('movie')
-      if (cachedMovie) {
-        cachedMovie = JSON.parse(cachedMovie)
-        if (cachedMovie.id == req.params.id) {
-          res.json(cachedMovie)
+      let cachedTvShow = await redis.get('tvShow')
+      if (cachedTvShow) {
+        cachedTvShow = JSON.parse(cachedTvShow)
+        if (cachedTvShow.id == req.params.id) {
+          res.json(cachedTvShow)
         }
       } else {
         const { data } = await axios.get(baseUrl)
-        const movie = data
-        res.json(movie)
-        redis.set('movie', JSON.stringify(movie))
+        const tvShow = data
+        res.json(tvShow)
+        redis.set('tvShow', JSON.stringify(tvShow))
       }
     } catch (err) {
       next(err)
@@ -54,8 +54,8 @@ class Controller {
     try {
       const response = await axios.put(baseUrl + '/' + req.params.id, req.body)
       res.json(response.data)
-      await redis.del('movie')
-      await redis.del('movies')
+      await redis.del('tvShow')
+      await redis.del('tvShows')
     } catch (err) {
       next(err)
     }
@@ -65,8 +65,8 @@ class Controller {
     try {
       const response = axios.delete(baseUrl + '/' + req.params.id)
       res.json(response.data)
-      redis.del('movie')
-      redis.del('movies')
+      redis.del('tvShow')
+      redis.del('tvShows')
     } catch (err) {
       next(err)
     }
