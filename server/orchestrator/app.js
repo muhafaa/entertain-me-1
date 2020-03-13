@@ -1,18 +1,13 @@
-const express = require('express')
-const app = express()
-const PORT = process.env.PORT || 3000
-const router = require('./routes')
+const { ApolloServer } = require('apollo-server')
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
+const { typeDefs } = require('./types')
+const resolvers = require('./resolvers')
 
-app.use(router)
-
-app.use((err, req, res, next) => {
-  console.log(err)
-  res.status(500).json(err)
+const server = new ApolloServer({
+  typeDefs: typeDefs,
+  resolvers: resolvers
 })
 
-app.listen(PORT, () => {
-  console.log('Orchestrator: Listen on port: ' + PORT)
+server.listen().then(({ url }) => {
+  console.log('server started', url)
 })

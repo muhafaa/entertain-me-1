@@ -51,7 +51,7 @@ class Controller {
       _id: ObjectId(req.params.id)
     })
       .then((movie) => {
-        return Movie.updateOne(
+        return Movie.findOneAndUpdate(
           {
             _id: ObjectId(req.params.id)
           },
@@ -63,12 +63,14 @@ class Controller {
               popularity: req.body.popularity || movie.popularity,
               tags: req.body.tags || movie.tags
             }
+          },
+          {
+            returnOriginal: false
           }
         )
       })
       .then((result) => {
-        // console.log({ update: result })
-        res.json({ updated_data: req.body })
+        res.json(result.value)
       })
       .catch((err) => {
         next(err)
@@ -77,12 +79,18 @@ class Controller {
 
   static delete(req, res, next) {
     const Movie = req.db.collection(collection)
-    Movie.deleteOne({
+    let movie
+    Movie.findOne({
       _id: ObjectId(req.params.id)
     })
       .then((result) => {
-        console.log({ delete: result })
-        res.json(result)
+        movie = result
+        return Movie.deleteOne({
+          _id: ObjectId(req.params.id)
+        })
+      })
+      .then(() => {
+        res.json(movie)
       })
       .catch((err) => {
         next(err)

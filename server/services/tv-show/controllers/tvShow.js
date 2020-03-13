@@ -51,7 +51,7 @@ class Controller {
       _id: ObjectId(req.params.id)
     })
       .then((tvShow) => {
-        return TvShow.updateOne(
+        return TvShow.findOneAndUpdate(
           {
             _id: ObjectId(req.params.id)
           },
@@ -63,12 +63,14 @@ class Controller {
               popularity: req.body.popularity || tvShow.popularity,
               tags: req.body.tags || tvShow.tags
             }
+          },
+          {
+            returnOriginal: false
           }
         )
       })
       .then((result) => {
-        // console.log({ update: result })
-        res.json({ updated_data: req.body })
+        res.json(result.value)
       })
       .catch((err) => {
         next(err)
@@ -77,12 +79,18 @@ class Controller {
 
   static delete(req, res, next) {
     const TvShow = req.db.collection(collection)
-    TvShow.deleteOne({
+    let tvShow
+    Movie.findOne({
       _id: ObjectId(req.params.id)
     })
       .then((result) => {
-        console.log({ delete: result })
-        res.json(result)
+        tvShow = result
+        return TvShow.deleteOne({
+          _id: ObjectId(req.params.id)
+        })
+      })
+      .then(() => {
+        res.json(tvShow)
       })
       .catch((err) => {
         next(err)
