@@ -1,4 +1,4 @@
-export const FETCH_MOVIE_LIST = ({ loading, error, data }) => {
+export const FETCH_TVSHOW_LIST = ({ loading, error, data }) => {
   if (loading) {
     return {
       type: 'FETCH_LOADING'
@@ -11,9 +11,9 @@ export const FETCH_MOVIE_LIST = ({ loading, error, data }) => {
     }
   } else if (data) {
     return {
-      type: 'FETCH_MOVIE_LIST',
+      type: 'FETCH_TVSHOW_LIST',
       payload: {
-        movieList: data.movies
+        tvShowList: data.tvShows
       }
     }
   }

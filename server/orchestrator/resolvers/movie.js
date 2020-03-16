@@ -26,7 +26,7 @@ const resolvers = {
         await redis.set('movies', JSON.stringify(data))
         return data
       } catch (err) {
-        res.status(500).json(err)
+        return err
       }
     }
   },

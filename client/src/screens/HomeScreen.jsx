@@ -1,42 +1,50 @@
-import React, { useEffect } from 'react'
-import { Text, View } from 'react-native'
-import { gql } from 'apollo-boost'
-// import { useDispatch } from 'react-redux'
-import { useQuery } from '@apollo/react-hooks'
+import React, { useState } from 'react'
+import { Text } from 'react-native'
 
-import { Button, Toast } from '@ant-design/react-native'
+import { TabBar } from '@ant-design/react-native'
+import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
+import ActionButton from 'react-native-action-button'
 
-import { GET_MOVIE_LIST } from '../store/actions/movie'
+import MovieScreen from './MovieScreen'
+import TvShow from './TvShow'
 
-const MOVIE = gql`
-  {
-    movies {
-      _id
-      title
-      overview
-      poster_path
-      popularity
-      tags
-    }
-  }
-`
-
-const Homepage = () => {
-  // const dispatch = useDispatch()
-  const { loading, error, data } = useQuery(MOVIE)
-
-  if (error) {
-    console.log(error)
-  } else {
-    console.log(data)
-  }
+const HomeScreen = (props) => {
+  const [selectedTab, setSelectedTab] = useState('Movie')
 
   return (
-    <View style={{ marginTop: '10%' }}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <Button onPress={() => Toast.info('This is a toast tips')}>Start</Button>
-    </View>
+    <>
+      <TabBar
+        unselectedTintColor="#949494"
+        tintColor="#33A3F4"
+        barTintColor="#263c0a80"
+      >
+        <TabBar.Item
+          title="Movie"
+          icon={<MaterialIcons name="movie" size={30} color="white" />}
+          selected={selectedTab === 'Movie'}
+          onPress={() => setSelectedTab('Movie')}
+        >
+          <MovieScreen />
+        </TabBar.Item>
+        <TabBar.Item
+          title="TV Show"
+          icon={<FontAwesome name="tv" size={30} color="white" />}
+          selected={selectedTab === 'TvShow'}
+          onPress={() => setSelectedTab('TvShow')}
+        >
+          <TvShow />
+        </TabBar.Item>
+      </TabBar>
+      <ActionButton
+        buttonColor="#2ab3ff"
+        position="center"
+        offsetY={20}
+        onPress={() => {
+          props.navigation.navigate('AddMovie')
+        }}
+      />
+    </>
   )
 }
 
-export default Homepage
+export default HomeScreen

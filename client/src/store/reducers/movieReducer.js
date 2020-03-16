@@ -1,12 +1,23 @@
 const initialState = {
-  movieList: []
+  movieList: [],
+  loadingMovie: true
 }
 
 function movieReducer(state = initialState, action) {
   switch (action.type) {
-    case 'GET_MOVIE_LIST':
-      console.log(action.payload.movieList)
-      return { ...state, movieList: action.payload.movieList }
+    case 'FETCH_MOVIE_LIST':
+      console.log(action.payload)
+      return {
+        ...state,
+        movieList: action.payload.movieList,
+        loadingMovie: false
+      }
+
+    case 'FETCH_ERROR':
+      return { ...state, loadingMovie: false }
+
+    case 'FETCH_LOADING':
+      return { ...state, loadingMovie: true }
 
     default:
       return state
