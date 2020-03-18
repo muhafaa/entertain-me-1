@@ -80,7 +80,7 @@ class Controller {
   static delete(req, res, next) {
     const TvShow = req.db.collection(collection)
     let tvShow
-    Movie.findOne({
+    TvShow.findOne({
       _id: ObjectId(req.params.id)
     })
       .then((result) => {

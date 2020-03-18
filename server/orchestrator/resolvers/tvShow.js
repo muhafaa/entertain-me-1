@@ -2,7 +2,7 @@ const axios = require('axios')
 const Redis = require('ioredis')
 const redis = new Redis()
 
-const baseUrl = 'http://localhost:3002/tvShows'
+const baseUrl = 'http://localhost:3002/tv-shows'
 
 const resolvers = {
   Query: {

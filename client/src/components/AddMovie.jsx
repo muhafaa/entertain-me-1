@@ -4,10 +4,10 @@ import {
   Text,
   TextInput,
   ScrollView,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  ToastAndroid
 } from 'react-native'
-import { gql } from 'apollo-boost'
-import { useMutation } from '@apollo/react-hooks'
+import { useNavigation } from '@react-navigation/native'
 
 import { Card, WhiteSpace, Button } from '@ant-design/react-native'
 import s from '../../styles'
@@ -15,45 +15,15 @@ import s from '../../styles'
 import RadioForm from 'react-native-simple-radio-button'
 import Tag from './Tag'
 
-const ADD_MOVIE = gql`
-  mutation {
-    addMovie(
-      title: "title2"
-      overview: "overview2"
-      poster_path: "ww2.ww2.com"
-      popularity: 5.99
-      tags: ["tag2", "tag2"]
-    ) {
-      _id
-      title
-      overview
-      poster_path
-      popularity
-      tags
-    }
-  }
-`
+import { GET_MOVIE_LIST } from '../queries/movie'
+import { GET_TVSHOW_LIST } from '../queries/tvShow'
 
-const ADD_TV_SHOW = gql`
-  mutation {
-    addTvShow(
-      title: "title2"
-      overview: "overview2"
-      poster_path: "ww2.ww2.com"
-      popularity: 5.99
-      tags: ["tag2", "tag2"]
-    ) {
-      _id
-      title
-      overview
-      poster_path
-      popularity
-      tags
-    }
-  }
-`
+import { useMutation } from '@apollo/react-hooks'
+import { ADD_MOVIE } from '../mutations/movie'
+import { ADD_TV_SHOW } from '../mutations/tvShow'
 
 const AddMovie = () => {
+  const { goBack } = useNavigation()
   const radioOpts = [
     { label: 'Movie', value: 'movie' },
     { label: 'TV Show', value: 'tvShow' }
@@ -66,13 +36,58 @@ const AddMovie = () => {
   const [popularity, setPopularity] = useState('')
   const [poster, setPoster] = useState('')
 
+  const [addMovie, { data: addMovieResult }] = useMutation(ADD_MOVIE, {
+    refetchQueries: [{ query: GET_MOVIE_LIST }]
+  })
+  const [addTvShow, { data: addTvShowResult }] = useMutation(ADD_TV_SHOW, {
+    refetchQueries: [{ query: GET_TVSHOW_LIST }]
+  })
+
   const submit = () => {
-    console.log(typeof popularity)
+    if (opt === 'movie') {
+      addMovie({
+        variables: {
+          title: title,
+          overview: overview,
+          poster_path: poster,
+          popularity: parseFloat(popularity),
+          tags: tags
+        }
+      })
+        .then((res) => {
+          console.log(res)
+          goBack()
+          ToastAndroid.show(`New ${opt} has been added`, ToastAndroid.SHORT)
+        })
+        .catch((err) => {
+          console.log(err)
+          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT)
+        })
+    } else {
+      addTvShow({
+        variables: {
+          title: title,
+          overview: overview,
+          poster_path: poster,
+          popularity: parseFloat(popularity),
+          tags: tags
+        }
+      })
+        .then((res) => {
+          console.log(res)
+          goBack()
+          ToastAndroid.show(`New ${opt} has been added`, ToastAndroid.SHORT)
+        })
+        .catch((err) => {
+          console.log(err)
+          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT)
+        })
+    }
   }
 
   return (
-    <KeyboardAvoidingView>
-      <ScrollView>
+    <ScrollView>
+      <KeyboardAvoidingView enabled={true} behavior="position">
         <Card
           style={{ margin: 10, alignContent: 'center', alignItems: 'center' }}
         >
@@ -193,8 +208,8 @@ const AddMovie = () => {
                     alignContent: 'center'
                   }}
                 >
-                  {tags.map((tag) => {
-                    return <Tag tag={tag} key={tag} />
+                  {tags.map((tag, i) => {
+                    return <Tag tag={tag} key={i} />
                   })}
                 </View>
               ) : (
@@ -211,8 +226,8 @@ const AddMovie = () => {
             </Button>
           </View>
         </Card>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </ScrollView>
   )
 }
 
