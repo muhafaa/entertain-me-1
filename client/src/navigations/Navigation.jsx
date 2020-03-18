@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import HomeScreen from '../screens/HomeScreen'
 import AddMovie from '../components/AddMovie'
+import MovieDetail from '../components/MovieDetail'
 
 const Stack = createStackNavigator()
 
@@ -29,6 +30,20 @@ const Navigation = () => {
         <Stack.Screen
           name="AddMovie"
           component={AddMovie}
+          options={{
+            headerTitleAlign: 'center',
+            headerStyle: {
+              backgroundColor: '#25410b'
+            },
+            headerTitleStyle: {
+              color: 'white',
+              fontWeight: 'bold'
+            }
+          }}
+        />
+        <Stack.Screen
+          name="MovieDetail"
+          component={MovieDetail}
           options={{
             headerTitleAlign: 'center',
             headerStyle: {

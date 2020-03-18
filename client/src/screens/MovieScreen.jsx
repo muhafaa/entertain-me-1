@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Text, View, ScrollView, Image } from 'react-native'
+import { View, ScrollView, Text } from 'react-native'
 import { gql } from 'apollo-boost'
 import { useQuery } from '@apollo/react-hooks'
 import { useDispatch, useSelector } from 'react-redux'
@@ -11,6 +11,7 @@ import Loading from '../components/Loading'
 import MovieCard from '../components/MovieCard'
 
 import { FETCH_MOVIE_LIST } from '../store/actions/movie'
+import { FlatList } from 'react-native-gesture-handler'
 
 const GET_MOVIE_LIST = gql`
   {
@@ -59,15 +60,12 @@ const MovieScreen = () => {
                   {movies.map((movie, i) => {
                     return <MovieCard item={movie} key={movie._id} />
                   })}
-                  {movies.map((movie, i) => {
-                    return <MovieCard item={movie} key={movie._id} />
-                  })}
-                  {movies.map((movie, i) => {
-                    return <MovieCard item={movie} key={movie._id} />
-                  })}
-                  {movies.map((movie, i) => {
-                    return <MovieCard item={movie} key={movie._id} />
-                  })}
+                  <FlatList
+                    data={movies}
+                    renderItem={({ item }) => {
+                      return <MovieCard item={item} key={item._id} />
+                    }}
+                  />
                 </View>
                 <WhiteSpace />
               </ScrollView>

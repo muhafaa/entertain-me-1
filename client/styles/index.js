@@ -66,7 +66,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   tengahin: {
-    textAlign: 'center',
     alignSelf: 'center',
     alignItems: 'center',
     alignContent: 'center',

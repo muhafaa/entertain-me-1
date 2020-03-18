@@ -6,7 +6,6 @@ const initialState = {
 function movieReducer(state = initialState, action) {
   switch (action.type) {
     case 'FETCH_MOVIE_LIST':
-      console.log(action.payload)
       return {
         ...state,
         movieList: action.payload.movieList,

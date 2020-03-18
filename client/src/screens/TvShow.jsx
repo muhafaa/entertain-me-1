@@ -8,7 +8,7 @@ import { WhiteSpace } from '@ant-design/react-native'
 import s from '../../styles'
 
 import Loading from '../components/Loading'
-import TvShowCard from '../components/MovieCard'
+import MovieCard from '../components/MovieCard'
 
 import { FETCH_TVSHOW_LIST } from '../store/actions/tvShow'
 
@@ -59,16 +59,16 @@ const TvShowScreen = () => {
                   ]}
                 >
                   {TvShows.map((tvShow, i) => {
-                    return <TvShowCard item={tvShow} key={tvShow._id} />
+                    return <MovieCard item={tvShow} key={tvShow._id} />
                   })}
                   {TvShows.map((tvShow, i) => {
-                    return <TvShowCard item={tvShow} key={tvShow._id} />
+                    return <MovieCard item={tvShow} key={tvShow._id} />
                   })}
                   {TvShows.map((tvShow, i) => {
-                    return <TvShowCard item={tvShow} key={tvShow._id} />
+                    return <MovieCard item={tvShow} key={tvShow._id} />
                   })}
                   {TvShows.map((tvShow, i) => {
-                    return <TvShowCard item={tvShow} key={tvShow._id} />
+                    return <MovieCard item={tvShow} key={tvShow._id} />
                   })}
                 </View>
                 <WhiteSpace />
