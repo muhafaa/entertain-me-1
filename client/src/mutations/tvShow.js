@@ -27,15 +27,15 @@ const ADD_TV_SHOW = gql`
 
 const UPDATE_TV_SHOW = gql`
   mutation UpdateTvShow(
-    $_id: ID!
+    $id: ID!
     $title: String!
     $overview: String!
     $poster_path: String!
     $popularity: Float!
     $tags: [String]!
   ) {
-    UpdateTvShow(
-      id: $_id
+    updateTvShow(
+      id: $id
       title: $title
       overview: $overview
       poster_path: $poster_path

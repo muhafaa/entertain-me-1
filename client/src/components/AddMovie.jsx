@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   ToastAndroid
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import { useSelector } from 'react-redux'
 
 import { Card, WhiteSpace, Button } from '@ant-design/react-native'
 import s from '../../styles'
@@ -19,22 +20,47 @@ import { GET_MOVIE_LIST } from '../queries/movie'
 import { GET_TVSHOW_LIST } from '../queries/tvShow'
 
 import { useMutation } from '@apollo/react-hooks'
-import { ADD_MOVIE } from '../mutations/movie'
-import { ADD_TV_SHOW } from '../mutations/tvShow'
+import { ADD_MOVIE, UPDATE_MOVIE } from '../mutations/movie'
+import { ADD_TV_SHOW, UPDATE_TV_SHOW } from '../mutations/tvShow'
 
-const AddMovie = () => {
+const AddMovie = (props) => {
+  // console.log(props)
   const { goBack } = useNavigation()
+
+  const movie = props.route.params
+    ? useSelector((state) => {
+        const { category, movieId } = props.route.params
+        if (category === 'Movie') {
+          return state.movieReducer.movieList.find((movie) => {
+            return movie._id === movieId
+          })
+        }
+        return state.tvShowReducer.tvShowList.find((tvShow) => {
+          return tvShow._id === movieId
+        })
+      })
+    : {}
+
   const radioOpts = [
     { label: 'Movie', value: 'movie' },
     { label: 'TV Show', value: 'tvShow' }
   ]
-  const [opt, setOpt] = useState('movie')
+  let initialOption = 0
+  const [opt, setOpt] = useState(() => {
+    if (props.route.params) {
+      if (props.route.params.category === 'Movie') {
+        return 'movie'
+      }
+      initialOption = 1
+      return 'tvShow'
+    }
+  })
   const [tagInput, setTagInput] = useState('')
-  const [tags, setTags] = useState([])
-  const [title, setTitle] = useState('')
-  const [overview, setOverview] = useState('')
-  const [popularity, setPopularity] = useState('')
-  const [poster, setPoster] = useState('')
+  const [tags, setTags] = useState(movie.tags || [])
+  const [title, setTitle] = useState(movie.title || [])
+  const [overview, setOverview] = useState(movie.overview || '')
+  const [popularity, setPopularity] = useState(movie.popularity || '')
+  const [poster, setPoster] = useState(movie.poster_path || '')
 
   const [addMovie, { data: addMovieResult }] = useMutation(ADD_MOVIE, {
     refetchQueries: [{ query: GET_MOVIE_LIST }]
@@ -43,45 +69,102 @@ const AddMovie = () => {
     refetchQueries: [{ query: GET_TVSHOW_LIST }]
   })
 
+  const [updateMovie, { data: updatedMovieResult }] = useMutation(
+    UPDATE_MOVIE,
+    {
+      refetchQueries: [{ query: GET_MOVIE_LIST }]
+    }
+  )
+  const [updateTvShow, { data: updatedTvShowResult }] = useMutation(
+    UPDATE_TV_SHOW,
+    {
+      refetchQueries: [{ query: GET_TVSHOW_LIST }]
+    }
+  )
+
   const submit = () => {
-    if (opt === 'movie') {
-      addMovie({
-        variables: {
-          title: title,
-          overview: overview,
-          poster_path: poster,
-          popularity: parseFloat(popularity),
-          tags: tags
-        }
-      })
-        .then((res) => {
-          console.log(res)
-          goBack()
-          ToastAndroid.show(`New ${opt} has been added`, ToastAndroid.SHORT)
+    if (movie) {
+      if (opt === 'movie') {
+        updateMovie({
+          variables: {
+            id: movie._id,
+            title: title,
+            overview: overview,
+            poster_path: poster,
+            popularity: parseFloat(popularity),
+            tags: tags
+          }
         })
-        .catch((err) => {
-          console.log(err)
-          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT)
+          .then((res) => {
+            console.log(res)
+            goBack()
+            ToastAndroid.show(`${opt} updated`, ToastAndroid.SHORT)
+          })
+          .catch((err) => {
+            console.log(err)
+            ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT)
+          })
+      } else {
+        updateTvShow({
+          variables: {
+            id: movie._id,
+            title: title,
+            overview: overview,
+            poster_path: poster,
+            popularity: parseFloat(popularity),
+            tags: tags
+          }
         })
+          .then((res) => {
+            console.log(res)
+            goBack()
+            ToastAndroid.show(`${opt} updated`, ToastAndroid.SHORT)
+          })
+          .catch((err) => {
+            console.log(err)
+            ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT)
+          })
+      }
     } else {
-      addTvShow({
-        variables: {
-          title: title,
-          overview: overview,
-          poster_path: poster,
-          popularity: parseFloat(popularity),
-          tags: tags
-        }
-      })
-        .then((res) => {
-          console.log(res)
-          goBack()
-          ToastAndroid.show(`New ${opt} has been added`, ToastAndroid.SHORT)
+      if (opt === 'movie') {
+        addMovie({
+          variables: {
+            title: title,
+            overview: overview,
+            poster_path: poster,
+            popularity: parseFloat(popularity),
+            tags: tags
+          }
         })
-        .catch((err) => {
-          console.log(err)
-          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT)
+          .then((res) => {
+            console.log(res)
+            goBack()
+            ToastAndroid.show(`New ${opt} has been added`, ToastAndroid.SHORT)
+          })
+          .catch((err) => {
+            console.log(err)
+            ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT)
+          })
+      } else {
+        addTvShow({
+          variables: {
+            title: title,
+            overview: overview,
+            poster_path: poster,
+            popularity: parseFloat(popularity),
+            tags: tags
+          }
         })
+          .then((res) => {
+            console.log(res)
+            goBack()
+            ToastAndroid.show(`New ${opt} has been added`, ToastAndroid.SHORT)
+          })
+          .catch((err) => {
+            console.log(err)
+            ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT)
+          })
+      }
     }
   }
 
@@ -97,6 +180,7 @@ const AddMovie = () => {
           <View style={{ margin: 5 }}>
             <RadioForm
               radio_props={radioOpts}
+              initial={initialOption}
               formHorizontal={true}
               labelHorizontal={false}
               onPress={(value) => {

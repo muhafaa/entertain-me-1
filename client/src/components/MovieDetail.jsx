@@ -19,7 +19,7 @@ import { DELETE_TV_SHOW } from '../mutations/tvShow'
 
 const MovieDetail = (props) => {
   //   console.log(props)
-  const { goBack } = useNavigation()
+  const { goBack, navigate } = useNavigation()
   const [deleteMovie, { data: delMovieResponse }] = useMutation(DELETE_MOVIE, {
     refetchQueries: [{ query: GET_MOVIE_LIST }]
   })
@@ -182,7 +182,15 @@ const MovieDetail = (props) => {
                     >
                       <Entypo name="trash" size={25} />
                     </Button>
-                    <Button type="primary">
+                    <Button
+                      type="primary"
+                      onPress={() => {
+                        navigate('AddMovie', {
+                          category: props.route.params.category,
+                          movieId: movie._id
+                        })
+                      }}
+                    >
                       <Entypo name="edit" size={25} />
                     </Button>
                   </View>
